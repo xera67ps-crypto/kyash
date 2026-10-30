@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pocca">
+<meta name="theme-color" content="#ff5f6d">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Pocca（デモ）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"Hiragino Sans","Noto Sans CJK JP",sans-serif;background:#f7f8fb;color:#222}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+.head{background:linear-gradient(135deg,#ff7a59,#ff4f81);color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 20px 66px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px;letter-spacing:1px}
+.demo{font-size:11px;background:rgba(255,255,255,.25);padding:3px 8px;border-radius:10px}
+.lbl{margin-top:18px;font-size:13px;opacity:.9}
+.bal{font-size:36px;font-weight:800}.bal small{font-size:18px;margin-left:4px}
+.card{margin:-48px 20px 0;background:#1f2440;color:#fff;border-radius:18px;height:118px;padding:18px 20px;position:relative;box-shadow:0 8px 20px rgba(31,36,64,.3)}
+.card .chip{position:absolute;top:18px;right:20px;width:36px;height:26px;border-radius:6px;background:linear-gradient(135deg,#ffd27a,#e0a93b)}
+.card .num{position:absolute;left:20px;bottom:18px;letter-spacing:3px;opacity:.85}
+.btns{display:flex;margin:20px 20px 0;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.btns button{flex:1;border:0;background:none;padding:14px 0;font-weight:700;font-size:15px;color:#222}
+.btns button+button{border-left:1px solid #eee}
+.box{margin:18px 20px 0;background:#fff;border-radius:18px;padding:6px 18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ttl{display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:12px 0 4px}
+.ttl a{color:#ff4f81;font-weight:400}
+.day{font-size:12px;color:#999;padding:12px 0 2px}
+.tx{display:flex;align-items:center;padding:11px 0;border-top:1px solid #f1f1f4}
+.tx:active{background:#fafafa}
+.ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;flex-shrink:0}
+.in{background:#e3f6ee}.out{background:#fff0eb}.wd{background:#e8efff}
+.info{flex:1;min-width:0}
+.shop{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:11px;color:#999;margin-top:2px}
+.amt{font-weight:700;font-size:15px;margin-left:8px;white-space:nowrap}.amt.p{color:#18a874}
+.empty{color:#aaa;font-size:13px;text-align:center;padding:20px 0}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#fff;border-top:1px solid #eee;padding:8px 0 calc(env(safe-area-inset-bottom) + 8px)}
+.tabs div{flex:1;text-align:center;font-size:11px;color:#999}
+.tabs div span{display:block;font-size:20px}
+.tabs .on{color:#ff4f81}
+.page{display:none}.page.show{display:block}
+.bar{background:linear-gradient(135deg,#ff7a59,#ff4f81);color:#fff;padding:calc(env(safe-area-inset-top) + 16px) 20px 16px;text-align:center;font-weight:700}
+.bar small{display:block;font-weight:400;font-size:13px;opacity:.9;margin-top:2px}
+.mrow{display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #f1f1f4;font-size:14px}
+.mrow:first-of-type{border-top:0}
+.setrow{padding:14px 0;border-top:1px solid #f1f1f4;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.setrow:first-of-type{border-top:0}
+.red{color:#e5484d}
+.fab{position:fixed;right:calc(50% - 195px);bottom:calc(env(safe-area-inset-bottom) + 78px);width:54px;height:54px;border-radius:50%;border:0;background:#ff4f81;color:#fff;font-size:28px;box-shadow:0 6px 16px rgba(255,79,129,.4)}
+@media(max-width:430px){.fab{right:20px}}
+.sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.sheetbg.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:430px;border-radius:22px 22px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom) + 20px)}
+.sheet h2{font-size:17px;text-align:center;margin-bottom:14px}
+.seg{display:flex;background:#f1f1f4;border-radius:10px;padding:3px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:none;padding:8px 0;border-radius:8px;font-size:14px;color:#555}
+.seg button.on{background:#fff;color:#222;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.sheet label{display:block;font-size:12px;color:#888;margin:10px 0 4px}
+.sheet input{width:100%;font-size:17px;padding:12px;border:1px solid #e3e3e8;border-radius:10px;background:#fafafb;-webkit-appearance:none}
+.sheet .ok{width:100%;margin-top:18px;border:0;background:#ff4f81;color:#fff;font-size:16px;font-weight:700;padding:14px;border-radius:12px}
+.sheet .del{width:100%;margin-top:8px;border:0;background:none;color:#e5484d;font-size:15px;padding:10px}
+.sheet .cancel{width:100%;border:0;background:none;color:#888;font-size:15px;padding:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ウォレット -->
+  <div class="page show" id="p-home">
+    <div class="head">
+      <div class="top"><div class="logo">Pocca</div><div class="demo">DEMO</div></div>
+      <div class="lbl">残高</div>
+      <div class="bal" id="bal"></div>
+    </div>
+    <div class="card"><b>Pocca Card</b><div class="chip"></div><div class="num">•••• •••• •••• 0000</div></div>
+    <div class="btns">
+      <button onclick="openSheet(null,'wd')">↓ 出金</button>
+      <button onclick="openSheet(null,'in')">↑ 入金</button>
+    </div>
+    <div class="box">
+      <div class="ttl">最近の履歴 <a onclick="go('list')">一覧を見る ›</a></div>
+      <div id="recent"></div>
+    </div>
+  </div>
+  <!-- 履歴一覧 -->
+  <div class="page" id="p-list">
+    <div class="bar">利用履歴<small id="bal2"></small></div>
+    <div class="box" id="all"></div>
+  </div>
+  <!-- 家計簿 -->
+  <div class="page" id="p-book">
+    <div class="bar">家計簿</div>
+    <div class="box" id="book"></div>
+  </div>
+  <!-- アカウント -->
+  <div class="page" id="p-acct">
+    <div class="bar">アカウント</div>
+    <div class="box">
+      <div class="setrow" onclick="editStart()">最初の残高 <b id="startv"></b></div>
+      <div class="setrow red" onclick="resetData()">最初のデータに戻す</div>
+    </div>
+  </div>
+  <button class="fab" onclick="openSheet(null,'out')">＋</button>
+  <div class="tabs">
+    <div id="t-home" class="on" onclick="go('home')"><span>▭</span>ウォレット</div>
+    <div id="t-list" onclick="go('list')"><span>☰</span>履歴</div>
+    <div id="t-book" onclick="go('book')"><span>📊</span>家計簿</div>
+    <div id="t-acct" onclick="go('acct')"><span>◯</span>アカウント</div>
+  </div>
+</div>
+
+<!-- 入力シート -->
+<div class="sheetbg" id="bg" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <h2 id="stitle">追加</h2>
+    <div class="seg">
+      <button data-t="out" onclick="setType('out')">支払い</button>
+      <button data-t="in" onclick="setType('in')">入金</button>
+      <button data-t="wd" onclick="setType('wd')">出金</button>
+    </div>
+    <label>金額（円）</label><input id="fAmt" type="number" inputmode="numeric" placeholder="0">
+    <div id="nameWrap"><label>お店・内容</label><input id="fName" placeholder="例：コンビニ"></div>
+    <label>日付</label><input id="fDate" type="date">
+    <button class="ok" onclick="save()">保存</button>
+    <button class="del" id="delBtn" onclick="del()">この履歴を削除</button>
+    <button class="cancel" onclick="closeSheet()">キャンセル</button>
+  </div>
+</div>
+
+<script>
+// ===== 最初のデータ（「最初のデータに戻す」でここに戻ります）=====
+const DEFAULT_START = 256;
+const DEFAULT_HISTORY = [
+  ["2026-09-22",3000,"in"],["2026-09-22",3000,"in"],["2026-09-22",3000,"in"],
+  ["2026-09-23",100,"in"],["2026-09-23",200,"in"],["2026-09-23",1000,"in"],
+  ["2026-09-23",1000,"in"],["2026-09-23",2000,"in"],["2026-09-23",3000,"in"],
+  ["2026-09-23",3000,"in"],["2026-09-26",4000,"in"],["2026-09-28",2000,"in"],
+  ["2026-09-28",2000,"in"],["2026-10-04",2000,"in"],["2026-10-04",3000,"in"],
+  ["2026-10-05",2000,"in"],
+  ["2026-09-24",9280,"out","PowerDirector 365 年間契約"],
+  ["2026-09-24",5815,"out","DomoAI Standard＋追加生成予算"],
+  ["2026-09-24",3460,"out","ElevenLabs Creator"],
+  ["2026-09-26",3145,"out","Claude Code（Claude Pro）"],
+  ["2026-09-28",2900,"out","Gemini（Google AI Pro）"],
+  ["2026-09-30",2931,"out","Amazon.co.jp"],
+  ["2026-10-04",3700,"out","天然温泉 小田原コロナの湯"],
+  ["2026-10-10",1680,"out","TOYS SPOT PALO 秦野店"],
+  ["2026-10-22",1580,"out","Moff animal cafe 小田原ダイナシティ店"],
+];
+// ================================================================
+const KEY = "pocca-demo-v1";
+const fresh = () => ({ start: DEFAULT_START,
+  items: DEFAULT_HISTORY.map((h, i) => ({ id: i + 1, date: h[0], amt: h[1], type: h[2], name: h[3] || "" })) });
+let db;
+try { db = JSON.parse(localStorage.getItem(KEY)) || fresh(); } catch (e) { db = fresh(); }
+const store = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} };
+
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("ja-JP");
+const sign = t => t.type === "in" ? 1 : -1;
+const label = t => t.type === "in" ? "入金" : t.type === "wd" ? "出金" : (t.name || "支払い");
+const md = d => { const [, m, dd] = d.split("-"); return `${+m}月${+dd}日`; };
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+
+function render() {
+  const bal = db.start + db.items.reduce((s, t) => s + sign(t) * t.amt, 0);
+  $("bal").innerHTML = (bal < 0 ? "-" : "") + fmt(Math.abs(bal)) + "<small>円</small>";
+  $("bal2").textContent = "残高 " + (bal < 0 ? "-" : "") + "¥" + fmt(Math.abs(bal));
+  $("startv").textContent = fmt(db.start) + "円";
+  const sorted = [...db.items].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const row = (t, showDate) => `<div class="tx" onclick="openSheet(${t.id})">
+    <div class="ic ${t.type}">${t.type === "in" ? "💰" : t.type === "wd" ? "🏦" : "🛍️"}</div>
+    <div class="info"><div class="shop">${esc(label(t))}</div>
+    <div class="sub">${t.type === "in" ? "入金" : t.type === "wd" ? "出金" : "購入"}${showDate ? "　" + md(t.date) : ""}</div></div>
+    <div class="amt ${t.type === "in" ? "p" : ""}">${t.type === "in" ? "+ " : "- "}¥${fmt(t.amt)}</div></div>`;
+  $("recent").innerHTML = sorted.slice(0, 3).map(t => row(t, true)).join("") || '<div class="empty">履歴はありません</div>';
+  let html = "", last = "";
+  sorted.forEach(t => { if (t.date !== last) { html += `<div class="day">${md(t.date)}</div>`; last = t.date; } html += row(t, false); });
+  $("all").innerHTML = html || '<div class="empty">履歴はありません</div>';
+  const months = {};
+  db.items.forEach(t => { const m = t.date.slice(0, 7); months[m] = months[m] || { in: 0, out: 0 };
+    if (t.type === "in") months[m].in += t.amt; else months[m].out += t.amt; });
+  $("book").innerHTML = Object.keys(months).sort().reverse().map(m => {
+    const [y, mm] = m.split("-");
+    return `<div class="mrow"><b>${y}年${+mm}月</b><span><span style="color:#18a874">+${fmt(months[m].in)}</span>　-${fmt(months[m].out)}円</span></div>`;
+  }).join("") || '<div class="empty">データがありません</div>';
+}
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function go(p) {
+  ["home", "list", "book", "acct"].forEach(x => { $("p-" + x).classList.toggle("show", x === p); $("t-" + x).classList.toggle("on", x === p); });
+  scrollTo(0, 0);
+}
+
+let editing = null, curType = "out";
+function setType(t) {
+  curType = t;
+  document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  $("nameWrap").style.display = t === "out" ? "block" : "none";
+}
+function openSheet(id, type) {
+  editing = id ? db.items.find(t => t.id === id) : null;
+  $("stitle").textContent = editing ? "履歴を編集" : "追加";
+  $("fAmt").value = editing ? editing.amt : "";
+  $("fName").value = editing ? editing.name : "";
+  $("fDate").value = editing ? editing.date : today();
+  $("delBtn").style.display = editing ? "block" : "none";
+  setType(editing ? editing.type : type);
+  $("bg").classList.add("show");
+}
+function closeSheet() { $("bg").classList.remove("show"); }
+function save() {
+  const amt = parseInt($("fAmt").value, 10);
+  if (!amt || amt <= 0) { $("fAmt").focus(); return; }
+  const data = { date: $("fDate").value || today(), amt, type: curType, name: curType === "out" ? $("fName").value.trim() : "" };
+  if (editing) Object.assign(editing, data);
+  else db.items.push({ id: Math.max(0, ...db.items.map(t => t.id)) + 1, ...data });
+  store(); render(); closeSheet();
+}
+function del() {
+  if (!editing) return;
+  db.items = db.items.filter(t => t !== editing);
+  store(); render(); closeSheet();
+}
+function editStart() {
+  const v = prompt("最初の残高（円）", db.start);
+  if (v !== null && !isNaN(parseInt(v, 10))) { db.start = parseInt(v, 10); store(); render(); }
+}
+function resetData() {
+  if (confirm("最初のデータに戻しますか？追加・編集した内容は消えます。")) { db = fresh(); store(); render(); }
+}
+render();
+</script>
+</body>
+</html>
