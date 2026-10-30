@@ -13,7 +13,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,"Hiragino Sans","Noto Sans CJK JP",sans-serif;background:#f7f8fb;color:#222}
-.app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:160px}
 .head{background:linear-gradient(135deg,#3b82f6,#4338ca);color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 20px 66px}
 .top{display:flex;justify-content:space-between;align-items:center}
 .logo{font-weight:800;font-size:20px;letter-spacing:1px}
@@ -133,8 +133,42 @@ body{font-family:-apple-system,"Hiragino Sans","Noto Sans CJK JP",sans-serif;bac
 
 <script>
 // ===== 最初のデータ（「最初のデータに戻す」でここに戻ります）=====
-const DEFAULT_START = 256;
+const DEFAULT_START = 462;
+// [日付, 金額, 種類(in=入金/out=支払い/wd=出金), お店, 時刻]
 const DEFAULT_HISTORY = [
+  ["2026-04-15",150,"out","APPLE COM BILL","2:43"],
+  ["2026-04-28",2000,"in","","0:31"],
+  ["2026-04-28",1661,"out","VREW 6311443","0:35"],
+  ["2026-05-08",306,"out","NINTENDO CD162581749","22:28"],
+  ["2026-05-14",2000,"in","","2:04"],
+  ["2026-05-14",28,"in","ポイント","2:06"],
+  ["2026-05-14",2278,"out","CapCut","2:07"],
+  ["2026-05-26",3000,"in","","12:07"],
+  ["2026-05-26",1830,"out","MIDJOURNEY INC.","12:09"],
+  ["2026-05-27",4000,"in","","6:35"],
+  ["2026-05-27",3875,"out","WWW.DOMOAI.APP","6:36"],
+  ["2026-05-28",733,"out","MIDJOURNEY INC.","9:24"],
+  ["2026-05-30",2300,"in","","10:51"],
+  ["2026-05-30",2015,"out","ELEVENLABS.IO","10:52"],
+  ["2026-06-07",306,"out","NINTENDO CD164355604","22:30"],
+  ["2026-06-15",150,"out","APPLE COM BILL","2:44"],
+  ["2026-06-28",5000,"in","","11:22"],
+  ["2026-06-28",5000,"out","TOHOシネマズ（ネット）","11:24"],
+  ["2026-07-15",150,"out","APPLE COM BILL","2:43"],
+  ["2026-07-23",500,"in","","22:40"],
+  ["2026-07-23",400,"out","NINTENDO CA167454723","22:41"],
+  ["2026-08-24",1000,"in","","16:53"],
+  ["2026-08-24",400,"out","NINTENDO CA169579989","16:53"],
+  ["2026-08-25",480,"out","APPLE COM BILL","11:18"],
+  ["2026-08-26",1000,"in","","11:44"],
+  ["2026-08-26",480,"out","APPLE COM BILL","11:45"],
+  ["2026-08-27",480,"out","APPLE COM BILL","0:15"],
+  ["2026-08-27",160,"out","APPLE COM BILL","0:15"],
+  ["2026-08-27",2000,"in","","0:49"],
+  ["2026-08-27",2000,"out","APPLE COM BILL","0:50"],
+  ["2026-08-28",2000,"in","","19:02"],
+  ["2026-08-28",2000,"out","APPLE COM BILL","19:03"],
+  ["2026-09-15",180,"out","APPLE COM BILL","2:42"],
   ["2026-09-22",3000,"in"],["2026-09-22",3000,"in"],["2026-09-22",3000,"in"],
   ["2026-09-23",100,"in"],["2026-09-23",200,"in"],["2026-09-23",1000,"in"],
   ["2026-09-23",1000,"in"],["2026-09-23",2000,"in"],["2026-09-23",3000,"in"],
@@ -152,9 +186,9 @@ const DEFAULT_HISTORY = [
   ["2026-10-22",1580,"out","Moff animal cafe 小田原ダイナシティ店"],
 ];
 // ================================================================
-const KEY = "pocca-demo-v1";
+const KEY = "pocca-demo-v2";
 const fresh = () => ({ start: DEFAULT_START,
-  items: DEFAULT_HISTORY.map((h, i) => ({ id: i + 1, date: h[0], amt: h[1], type: h[2], name: h[3] || "" })) });
+  items: DEFAULT_HISTORY.map((h, i) => ({ id: i + 1, date: h[0], amt: h[1], type: h[2], name: h[3] || "", time: h[4] || "" })) });
 let db;
 try { db = JSON.parse(localStorage.getItem(KEY)) || fresh(); } catch (e) { db = fresh(); }
 const store = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} };
@@ -162,7 +196,7 @@ const store = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } cat
 const $ = id => document.getElementById(id);
 const fmt = n => n.toLocaleString("ja-JP");
 const sign = t => t.type === "in" ? 1 : -1;
-const label = t => t.type === "in" ? "入金" : t.type === "wd" ? "出金" : (t.name || "支払い");
+const label = t => t.type === "in" ? (t.name || "入金") : t.type === "wd" ? "出金" : (t.name || "支払い");
 const md = d => { const [, m, dd] = d.split("-"); return `${+m}月${+dd}日`; };
 const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
 
@@ -171,11 +205,12 @@ function render() {
   $("bal").innerHTML = (bal < 0 ? "-" : "") + fmt(Math.abs(bal)) + "<small>円</small>";
   $("bal2").textContent = "残高 " + (bal < 0 ? "-" : "") + "¥" + fmt(Math.abs(bal));
   $("startv").textContent = fmt(db.start) + "円";
-  const sorted = [...db.items].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
-  const row = (t, showDate) => `<div class="tx" onclick="openSheet(${t.id})">
+  const tm = t => { const [h, m] = (t.time || "99:99").split(":"); return +h * 60 + +m; };
+  const sorted = [...db.items].sort((a, b) => b.date.localeCompare(a.date) || tm(b) - tm(a) || b.id - a.id);
+  const row = (t, showDate) => `<div class="tx">
     <div class="ic ${t.type}">${t.type === "in" ? "💰" : t.type === "wd" ? "🏦" : "🛍️"}</div>
     <div class="info"><div class="shop">${esc(label(t))}</div>
-    <div class="sub">${t.type === "in" ? "入金" : t.type === "wd" ? "出金" : "購入"}${showDate ? "　" + md(t.date) : ""}</div></div>
+    <div class="sub">${t.type === "in" ? "入金" : t.type === "wd" ? "出金" : "購入"}${showDate ? "　" + md(t.date) : ""}${t.time ? "　" + t.time : ""}</div></div>
     <div class="amt ${t.type === "in" ? "p" : ""}">${t.type === "in" ? "+ " : "- "}¥${fmt(t.amt)}</div></div>`;
   $("recent").innerHTML = sorted.slice(0, 3).map(t => row(t, true)).join("") || '<div class="empty">履歴はありません</div>';
   let html = "", last = "";
@@ -233,6 +268,7 @@ function editStart() {
 function resetData() {
   if (confirm("最初のデータに戻しますか？追加・編集した内容は消えます。")) { db = fresh(); store(); render(); }
 }
+openSheet = () => {}; editStart = () => {}; resetData = () => {}; document.querySelector(".fab").style.display = "none";
 render();
 </script>
 </body>
