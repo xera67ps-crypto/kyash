@@ -160,7 +160,7 @@ body{font-family:-apple-system,"Hiragino Sans","Noto Sans CJK JP",sans-serif;bac
 
 <script>
 // ===== 最初のデータ（「最初のデータに戻す」でここに戻ります）=====
-const DEFAULT_START = 462;
+const DEFAULT_START = 2010;
 // [日付, 金額, 種類(in=入金/out=支払い/wd=出金), お店, 時刻]
 const DEFAULT_HISTORY = [
   ["2026-04-15",150,"out","APPLE COM BILL","2:43"],
@@ -211,9 +211,16 @@ const DEFAULT_HISTORY = [
   ["2026-10-04",3700,"out","天然温泉 小田原コロナの湯"],
   ["2026-10-10",1680,"out","TOYS SPOT PALO 秦野店"],
   ["2026-10-22",1580,"out","Moff animal cafe 小田原ダイナシティ店"],
+    ["2026-10-12",2400,"in"],
+  ["2026-10-27",3000,"in","","18:48"],
+  ["2026-10-27",1000,"in","","18:50"],
+  ["2026-10-27",200,"in","","18:52"],
+  ["2026-10-27",4148,"out","ELEVENLABS.IO","18:53"],
+  ["2026-10-28",1000,"in","","16:18"],
+  ["2026-10-28",5000,"out","GOOGLE*CLOUD","16:26"],
 ];
 // ================================================================
-const KEY = "pocca-demo-v2";
+const KEY = "pocca-demo-v3";
 const fresh = () => ({ start: DEFAULT_START,
   items: DEFAULT_HISTORY.map((h, i) => ({ id: i + 1, date: h[0], amt: h[1], type: h[2], name: h[3] || "", time: h[4] || "" })) });
 let db;
